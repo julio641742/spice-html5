@@ -401,7 +401,7 @@ function webm_AudioTrackEntry()
 {
     this.id = WEBM_TRACK_ENTRY;
     this.number = 1;
-    this.uid = 1;
+    this.uid = 2;  // Arbitrary id; most likely makes no difference
     this.type = 2; // Audio
     this.flag_enabled = 1;
     this.flag_default = 1;
