@@ -899,7 +899,7 @@ function handle_draw_jpeg_onload()
     var temp_canvas = null;
     var context;
 
-    if (this.o.sc.streams[this.o.id])
+    if ("streams" in this.o.sc && this.o.sc.streams[this.o.id])
         this.o.sc.streams[this.o.id].frames_loading--;
 
     /*------------------------------------------------------------
