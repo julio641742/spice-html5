@@ -69,11 +69,15 @@
             function spice_error(e)
             {
                 disconnect();
+                if (e !== undefined && e.message === "Permission denied.") {
+                  var pass = prompt("Password");
+                  connect(pass);
+                }
             }
 
-            function connect()
+            function connect(password)
             {
-                var host, port, password, scheme = "ws://", uri;
+                var host, port, scheme = "ws://", uri;
 
                 // By default, use the host and port of server that served this file
                 host = spice_query_var('host', window.location.hostname);
@@ -102,7 +106,9 @@
                     spice_set_cookie('token', token, 1)
                 }
 
-                password = spice_query_var('password', '');
+                if (password === undefined) {
+                    password = spice_query_var('password', '');
+                }
                 var path = spice_query_var('path', 'websockify');
 
                 if ((!host) || (!port)) {
@@ -184,7 +190,7 @@
             });
             */
 
-            connect();
+            connect(undefined);
         </script>
 
     </head>
