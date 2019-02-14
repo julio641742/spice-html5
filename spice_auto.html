@@ -45,9 +45,7 @@
         </script>
 
         <script type="module" crossorigin="anonymous">
-            import { SpiceMainConn } from './main.js';
-            import { handle_file_dragover, handle_file_drop } from './filexfer.js';
-            import { resize_helper, handle_resize } from './resize.js';
+            import * as SpiceHtml5 from './main.js';
 
             var host = null, port = null;
             var sc;
@@ -124,7 +122,7 @@
 
                 try
                 {
-                    sc = new SpiceMainConn({uri: uri, screen_id: "spice-screen", dump_id: "debug-div",
+                    sc = new SpiceHtml5.SpiceMainConn({uri: uri, screen_id: "spice-screen", dump_id: "debug-div",
                                 message_id: "message-div", password: password, onerror: spice_error, onagent: agent_connected });
                 }
                 catch (e)
@@ -145,26 +143,26 @@
                 {
                     var spice_xfer_area = document.getElementById('spice-xfer-area');
                     document.getElementById('spice-area').removeChild(spice_xfer_area);
-                    document.getElementById('spice-area').removeEventListener('dragover', handle_file_dragover, false);
-                    document.getElementById('spice-area').removeEventListener('drop', handle_file_drop, false);
+                    document.getElementById('spice-area').removeEventListener('dragover', SpiceHtml5.handle_file_dragover, false);
+                    document.getElementById('spice-area').removeEventListener('drop', SpiceHtml5.handle_file_drop, false);
                 }
                 console.log("<< disconnect");
             }
 
             function agent_connected(sc)
             {
-                window.addEventListener('resize', handle_resize);
+                window.addEventListener('resize', SpiceHtml5.handle_resize);
                 window.spice_connection = this;
 
-                resize_helper(this);
+                SpiceHtml5.resize_helper(this);
 
                 if (window.File && window.FileReader && window.FileList && window.Blob)
                 {
                     var spice_xfer_area = document.createElement("div");
                     spice_xfer_area.setAttribute('id', 'spice-xfer-area');
                     document.getElementById('spice-area').appendChild(spice_xfer_area);
-                    document.getElementById('spice-area').addEventListener('dragover', handle_file_dragover, false);
-                    document.getElementById('spice-area').addEventListener('drop', handle_file_drop, false);
+                    document.getElementById('spice-area').addEventListener('dragover', SpiceHtml5.handle_file_dragover, false);
+                    document.getElementById('spice-area').addEventListener('drop', SpiceHtml5.handle_file_drop, false);
                 }
                 else
                 {
