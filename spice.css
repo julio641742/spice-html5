@@ -36,7 +36,6 @@ body
 #login input
 {
     padding: 5px;
-    background-color: #fAfAfA;
     border: 1px inset #999999;
     outline: none;
     -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px;
