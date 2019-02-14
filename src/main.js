@@ -56,6 +56,8 @@ import { resize_helper, handle_resize } from './resize.js';
 **          onagent     (optional)  If given, a function to be called when
 **                                  a VD agent is connected; a good opportunity
 **                                  to request a resize
+**          onsuccess   (optional)  If given, a function to be called when the
+**                                  session is successfully connected
 **
 **  Throws error if there are troubles.  Requires a modern (by 2012 standards)
 **      browser, including WebSocket and WebSocket.binaryType == arraybuffer
