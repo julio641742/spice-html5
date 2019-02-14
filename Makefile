@@ -26,22 +26,34 @@ endif
 
 source_for_rpm = $(HOME)/rpmbuild/SOURCES/spice-html5-$(version).tar.gz
 
-.PHONY: usage spice-html5.spec rpm tar gittar local git install
+.PHONY: usage spice-html5.spec package.json rpm tar gittar local git install
 
 usage:
 	@echo "This project does not normally need to be built.  See the README."
 	@echo " "
-	@echo "This Makefile is mostly used for creating RPM packages, which you"
-	@echo "can do by invoking 'make local' to use the current working directory,"
-	@echo "or 'make git' to use the latest git HEAD."
-	@echo "You can specify an alternate source tarball like this:"
-	@echo "  make source=/my/alternate/source local"
-	@echo "You can specifcy a specific git tag like this:"
-	@echo "  make tag=my_specific_tag git"
-	@echo "Results generally go in ~/rpmbuild"
+	@echo "This Makefile is used for creating RPM packages and the package.json file used by npm."
+	@echo " "
+	@echo "Building an rpm: "
+	@echo "  Invoke 'make local' to make an rpm with the current working directory,"
+	@echo "  or 'make git' to make an rpm with the latest git HEAD."
+	@echo "  You can specify an alternate source tarball like this:"
+	@echo "    make source=/my/alternate/source local"
+	@echo "  You can specify a specific git tag like this:"
+	@echo "    make tag=my_specific_tag git"
+	@echo "  Results generally go in ~/rpmbuild"
+	@echo " "
+	@echo "Preparing for an npm publish:"
+	@echo "    make package.json"
+	@echo "  where you can specify"
+	@echo "    make tag=my_specific_tag package.json"
+	@echo "  to prepare a particular release."
+
 
 spice-html5.spec:
 	sed -e "s/VERSION/$(version)/" < spice-html5.spec.in > spice-html5.spec
+
+package.json:
+	sed -e "s/VERSION/$(version)/" < package.json.in > package.json
 
 tar:
 	if [ "$(source)x" = "x" ] ; then \

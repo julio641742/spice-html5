@@ -1,6 +1,6 @@
 {
   "name": "spice-html5",
-  "version": "0.1.8",
+  "version": "VERSION",
   "description": "Spice Javascript client",
   "main": "src/main.js",
   "scripts": {
