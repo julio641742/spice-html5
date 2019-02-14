@@ -58,13 +58,13 @@ function resize_helper(sc)
     }
 
 
-    /* Xorg requires height be a multiple of 8; round up */
+    /* Xorg requires height be a multiple of 8; round down */
     if (h % 8 > 0)
-        h += (8 - (h % 8));
+        h -= (h % 8);
 
-    /* Xorg requires width be a multiple of 8; round up */
+    /* Xorg requires width be a multiple of 8; round down */
     if (w % 8 > 0)
-        w += (8 - (w % 8));
+        w -= (w % 8);
 
 
     sc.resize_window(0, w, h, 32, 0, 0);
