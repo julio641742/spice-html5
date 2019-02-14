@@ -80,3 +80,8 @@ function handle_resize(e)
 
     sc.spice_resize_timer = window.setTimeout(resize_helper, 200, sc);
 }
+
+export {
+  resize_helper,
+  handle_resize,
+};

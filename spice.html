@@ -28,38 +28,27 @@
     <head>
 
         <title>Spice Javascript client</title>
-        <script src="spicearraybuffer.js"></script>
-        <script src="enums.js"></script>
-        <script src="atKeynames.js"></script>
-        <script src="utils.js"></script>
-        <script src="png.js"></script>
-        <script src="lz.js"></script>
-        <script src="quic.js"></script>
-        <script src="bitmap.js"></script>
-        <script src="spicedataview.js"></script>
-        <script src="spicetype.js"></script>
-        <script src="spicemsg.js"></script>
-        <script src="wire.js"></script>
-        <script src="spiceconn.js"></script>
-        <script src="display.js"></script>
-        <script src="port.js"></script>
-        <script src="main.js"></script>
-        <script src="inputs.js"></script>
-        <script src="webm.js"></script>
-        <script src="playback.js"></script>
-        <script src="simulatecursor.js"></script>
-        <script src="cursor.js"></script>
-        <script src="thirdparty/jsbn.js"></script>
-        <script src="thirdparty/rsa.js"></script>
-        <script src="thirdparty/prng4.js"></script>
-        <script src="thirdparty/rng.js"></script>
-        <script src="thirdparty/sha1.js"></script>
-        <script src="ticket.js"></script>
-        <script src="resize.js"></script>
-        <script src="filexfer.js"></script>
         <link rel="stylesheet" type="text/css" href="spice.css" />
 
+        <!-- ES2015/ES6 modules polyfill -->
+        <script type="module">
+            window._spice_has_module_support = true;
+        </script>
         <script>
+            window.addEventListener("load", function() {
+                if (window._spice_has_module_support) return;
+                var loader = document.createElement("script");
+                loader.src = "thirdparty/browser-es-module-loader/dist/" +
+                    "browser-es-module-loader.js";
+                document.head.appendChild(loader);
+            });
+        </script>
+
+        <script type="module" crossorigin="anonymous">
+            import { SpiceMainConn } from './main.js';
+            import { handle_file_dragover, handle_file_drop } from './filexfer.js';
+            import { resize_helper, handle_resize } from './resize.js';
+
             var host = null, port = null;
             var sc;
 
@@ -172,6 +161,7 @@
             });
             */
 
+            document.getElementById('connectButton').onclick = connect;
         </script>
 
     </head>
@@ -184,7 +174,7 @@
             <label for="port">Port:</label> <input type='text' id='port' value='5959'>
             <label for="password">Password:</label> <input type='password' id='password' value=''>
             <label for="show_console">Show console </label><input type="checkbox" id="show_console" value="1" onchange="toggle_console()" checked>
-            <button id="connectButton" onclick="connect();">Start</button>
+            <button id="connectButton">Start</button>
         </div>
 
         <div id="spice-area">

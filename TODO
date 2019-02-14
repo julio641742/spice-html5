@@ -25,9 +25,6 @@ Medium Tasks:
 
 Big Tasks:
 
-  . Shift the code so it doesn't pollute the global namespace; that
-    will make it more usable as an embed or library
-
   . Generate messages + enums from spice.proto
 
   . Video:

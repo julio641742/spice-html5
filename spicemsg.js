@@ -24,11 +24,31 @@
 **  a spice server.  This file should arguably be generated from
 **  spice.proto, but it was instead put together by hand.
 **--------------------------------------------------------------------------*/
+
+import { Constants } from './enums.js';
+import { SpiceDataView } from './spicedataview.js';
+import { create_rsa_from_mb } from './ticket.js';
+import {
+  SpiceChannelId,
+  SpiceRect,
+  SpiceClip,
+  SpiceCopy,
+  SpiceFill,
+  SpicePoint,
+  SpiceSurface,
+  SpicePoint16,
+  SpiceCursor,
+} from './spicetype.js';
+import {
+  keycode_to_start_scan,
+  keycode_to_end_scan,
+} from './utils.js';
+
 function SpiceLinkHeader(a, at)
 {
-    this.magic = SPICE_MAGIC;
-    this.major_version = SPICE_VERSION_MAJOR;
-    this.minor_version = SPICE_VERSION_MINOR;
+    this.magic = Constants.SPICE_MAGIC;
+    this.major_version = Constants.SPICE_VERSION_MAJOR;
+    this.minor_version = Constants.SPICE_VERSION_MINOR;
     this.size = 0;
     if (a !== undefined)
         this.from_buffer(a, at);
@@ -160,7 +180,7 @@ SpiceLinkReply.prototype =
         this.error = dv.getUint32(at, true); at += 4;
 
         this.pub_key = create_rsa_from_mb(a, at);
-        at += SPICE_TICKET_PUBKEY_BYTES;
+        at += Constants.SPICE_TICKET_PUBKEY_BYTES;
 
         var num_common_caps = dv.getUint32(at, true); at += 4;
         var num_channel_caps  = dv.getUint32(at, true); at += 4;
@@ -195,7 +215,7 @@ SpiceLinkAuthTicket.prototype =
         var i;
         var dv = new SpiceDataView(a);
         dv.setUint32(at, this.auth_mechanism, true); at += 4;
-        for (i = 0; i < SPICE_TICKET_KEY_PAIR_LENGTH / 8; i++)
+        for (i = 0; i < Constants.SPICE_TICKET_KEY_PAIR_LENGTH / 8; i++)
         {
             if (this.encrypted_data && i < this.encrypted_data.length)
                 dv.setUint8(at, this.encrypted_data[i], true);
@@ -206,7 +226,7 @@ SpiceLinkAuthTicket.prototype =
     },
     buffer_size: function()
     {
-        return 4 + (SPICE_TICKET_KEY_PAIR_LENGTH / 8);
+        return 4 + (Constants.SPICE_TICKET_KEY_PAIR_LENGTH / 8);
     }
 }
 
@@ -461,7 +481,7 @@ SpiceMsgcMainAgentStart.prototype =
 
 function SpiceMsgcMainAgentData(type, data)
 {
-    this.protocol = VD_AGENT_PROTOCOL;
+    this.protocol = Constants.VD_AGENT_PROTOCOL;
     this.type = type;
     this.opaque = 0;
     this.size = data.buffer_size();
@@ -1002,8 +1022,8 @@ function SpiceMsgcMousePress(sc, e)
     }
     else
     {
-        this.button = SPICE_MOUSE_BUTTON_LEFT;
-        this.buttons_state = SPICE_MOUSE_BUTTON_MASK_LEFT;
+        this.button = Constants.SPICE_MOUSE_BUTTON_LEFT;
+        this.buttons_state = Constants.SPICE_MOUSE_BUTTON_MASK_LEFT;
     }
 }
 
@@ -1033,7 +1053,7 @@ function SpiceMsgcMouseRelease(sc, e)
     }
     else
     {
-        this.button = SPICE_MOUSE_BUTTON_LEFT;
+        this.button = Constants.SPICE_MOUSE_BUTTON_LEFT;
         this.buttons_state = 0;
     }
 }
@@ -1296,3 +1316,58 @@ SpiceMsgPortInit.prototype =
         this.name = a.slice(offset, offset + namesize - 1);
     }
 }
+
+export {
+  SpiceLinkHeader,
+  SpiceLinkMess,
+  SpiceLinkReply,
+  SpiceLinkAuthTicket,
+  SpiceLinkAuthReply,
+  SpiceMiniData,
+  SpiceMsgChannels,
+  SpiceMsgMainInit,
+  SpiceMsgMainMouseMode,
+  SpiceMsgMainAgentData,
+  SpiceMsgMainAgentTokens,
+  SpiceMsgSetAck,
+  SpiceMsgcAckSync,
+  SpiceMsgcMainMouseModeRequest,
+  SpiceMsgcMainAgentStart,
+  SpiceMsgcMainAgentData,
+  VDAgentAnnounceCapabilities,
+  VDAgentMonitorsConfig,
+  VDAgentFileXferStatusMessage,
+  VDAgentFileXferStartMessage,
+  VDAgentFileXferDataMessage,
+  SpiceMsgNotify,
+  SpiceMsgcDisplayInit,
+  SpiceMsgDisplayBase,
+  SpiceMsgDisplayDrawCopy,
+  SpiceMsgDisplayDrawFill,
+  SpiceMsgDisplayCopyBits,
+  SpiceMsgSurfaceCreate,
+  SpiceMsgSurfaceDestroy,
+  SpiceMsgInputsInit,
+  SpiceMsgInputsKeyModifiers,
+  SpiceMsgCursorInit,
+  SpiceMsgPlaybackData,
+  SpiceMsgPlaybackMode,
+  SpiceMsgPlaybackStart,
+  SpiceMsgCursorSet,
+  SpiceMsgcMousePosition,
+  SpiceMsgcMouseMotion,
+  SpiceMsgcMousePress,
+  SpiceMsgcMouseRelease,
+  SpiceMsgcKeyDown,
+  SpiceMsgcKeyUp,
+  SpiceMsgDisplayStreamCreate,
+  SpiceStreamDataHeader,
+  SpiceMsgDisplayStreamData,
+  SpiceMsgDisplayStreamDataSized,
+  SpiceMsgDisplayStreamClip,
+  SpiceMsgDisplayStreamDestroy,
+  SpiceMsgDisplayStreamActivateReport,
+  SpiceMsgcDisplayStreamReport,
+  SpiceMsgDisplayInvalList,
+  SpiceMsgPortInit,
+};

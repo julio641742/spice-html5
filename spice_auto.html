@@ -28,38 +28,27 @@
     <head>
 
         <title>Spice Javascript client</title>
-        <script src="spicearraybuffer.js"></script>
-        <script src="enums.js"></script>
-        <script src="atKeynames.js"></script>
-        <script src="utils.js"></script>
-        <script src="png.js"></script>
-        <script src="lz.js"></script>
-        <script src="quic.js"></script>
-        <script src="bitmap.js"></script>
-        <script src="spicedataview.js"></script>
-        <script src="spicetype.js"></script>
-        <script src="spicemsg.js"></script>
-        <script src="wire.js"></script>
-        <script src="spiceconn.js"></script>
-        <script src="display.js"></script>
-        <script src="port.js"></script>
-        <script src="main.js"></script>
-        <script src="inputs.js"></script>
-        <script src="webm.js"></script>
-        <script src="playback.js"></script>
-        <script src="simulatecursor.js"></script>
-        <script src="cursor.js"></script>
-        <script src="thirdparty/jsbn.js"></script>
-        <script src="thirdparty/rsa.js"></script>
-        <script src="thirdparty/prng4.js"></script>
-        <script src="thirdparty/rng.js"></script>
-        <script src="thirdparty/sha1.js"></script>
-        <script src="ticket.js"></script>
-        <script src="resize.js"></script>
-        <script src="filexfer.js"></script>
         <link rel="stylesheet" type="text/css" href="spice.css" />
 
+        <!-- ES2015/ES6 modules polyfill -->
+        <script type="module">
+            window._spice_has_module_support = true;
+        </script>
         <script>
+            window.addEventListener("load", function() {
+                if (window._spice_has_module_support) return;
+                var loader = document.createElement("script");
+                loader.src = "thirdparty/browser-es-module-loader/dist/" +
+                    "browser-es-module-loader.js";
+                document.head.appendChild(loader);
+            });
+        </script>
+
+        <script type="module" crossorigin="anonymous">
+            import { SpiceMainConn } from './main.js';
+            import { handle_file_dragover, handle_file_drop } from './filexfer.js';
+            import { resize_helper, handle_resize } from './resize.js';
+
             var host = null, port = null;
             var sc;
 
@@ -110,13 +99,13 @@
 
                 // If a token variable is passed in, set the parameter in a cookie.
                 // This is used by nova-spiceproxy.
-                token = spice_query_var('token', null);
+                var token = spice_query_var('token', null);
                 if (token) {
                     spice_set_cookie('token', token, 1)
                 }
 
                 password = spice_query_var('password', '');
-                path = spice_query_var('path', 'websockify');
+                var path = spice_query_var('path', 'websockify');
 
                 if ((!host) || (!port)) {
                     console.log("must specify host and port in URL");
