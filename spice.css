@@ -103,6 +103,8 @@ body
     -webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
     -moz-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+    /* We default the message box to hidden. */
+    display: none;
 }
 .spice-message p {
     margin-bottom: 0em;
