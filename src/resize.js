@@ -42,16 +42,19 @@ function resize_helper(sc)
     var h = window.innerHeight - 20;
 
     /* Screen height based on debug console visibility  */
-    if (window.getComputedStyle(m).getPropertyValue("display") == 'none')
+    if (m != null)
     {
-        /* Get console height from spice.css .spice-message */
-        var mh = parseInt(window.getComputedStyle(m).getPropertyValue("height"), 10);
-        h = h - mh;
-    }
-    else
-    {
-        /* Show both div elements - spice-area and message-div */
-        h = h - m.offsetHeight - m.clientHeight;
+        if (window.getComputedStyle(m).getPropertyValue("display") == 'none')
+        {
+            /* Get console height from spice.css .spice-message */
+            var mh = parseInt(window.getComputedStyle(m).getPropertyValue("height"), 10);
+            h = h - mh;
+        }
+        else
+        {
+            /* Show both div elements - spice-area and message-div */
+            h = h - m.offsetHeight - m.clientHeight;
+        }
     }
 
 
