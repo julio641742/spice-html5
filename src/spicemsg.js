@@ -952,13 +952,11 @@ function SpiceMsgcMousePosition(sc, e)
     this.buttons_state = sc.buttons_state;
     if (e)
     {
-        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-        var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+        this.x = e.offsetX;
+        this.y = e.offsetY;
 
-        this.x = e.clientX - sc.display.surfaces[sc.display.primary_surface].canvas.offsetLeft + scrollLeft;
-        this.y = e.clientY - sc.display.surfaces[sc.display.primary_surface].canvas.offsetTop + scrollTop;
-        sc.mousex = this.x;
-        sc.mousey = this.y;
+        sc.mousex = e.offsetX;
+        sc.mousey = e.offsetY;
     }
     else
     {
@@ -991,16 +989,16 @@ function SpiceMsgcMouseMotion(sc, e)
     this.buttons_state = sc.buttons_state;
     if (e)
     {
-        this.x = e.clientX - sc.display.surfaces[sc.display.primary_surface].canvas.offsetLeft;
-        this.y = e.clientY - sc.display.surfaces[sc.display.primary_surface].canvas.offsetTop;
+        this.x = e.offsetX;
+        this.y = e.offsetY;
 
         if (sc.mousex !== undefined)
         {
             this.x -= sc.mousex;
             this.y -= sc.mousey;
         }
-        sc.mousex = e.clientX - sc.display.surfaces[sc.display.primary_surface].canvas.offsetLeft;
-        sc.mousey = e.clientY - sc.display.surfaces[sc.display.primary_surface].canvas.offsetTop;
+        sc.mousex = e.offsetX;
+        sc.mousey = e.offsetY;
     }
     else
     {
