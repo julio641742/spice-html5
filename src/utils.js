@@ -114,14 +114,54 @@ function arraybuffer_to_str(buf) {
 }
 
 /*----------------------------------------------------------------------------
-** Converting keycodes to AT scancodes is very hard.
-** luckly there are some resources on the web and in the Xorg driver that help
-** us figure out what browser dependent keycodes match to what scancodes.
-**
-** This will most likely not work for non US keyboard and browsers other than
-** modern Chrome and FireFox.
+** Converting browser keycodes to AT scancodes is very hard.
+**  Spice transmits keys using the original AT scan codes, often
+**   described as 'Scan Code Set 1'.
+**  There is a confusion of other scan codes; Xorg synthesizes it's
+**   own in the same atKeynames.c file that has the XT codes.
+**  Scan code set 2 and 3 are more common, and use different values.
+** Further, there is no formal specification for keycodes
+**  returned by browsers, so we have done our mapping largely with
+**  empirical testing.
+** There has been little rigorous testing with International keyboards,
+**  and this would be an easy area for non English speakers to contribute.
 **--------------------------------------------------------------------------*/
 var common_scanmap = [];
+
+/* The following appear to be keycodes that work in most browsers */
+common_scanmap['1'.charCodeAt(0)]  = KeyNames.KEY_1;
+common_scanmap['2'.charCodeAt(0)]  = KeyNames.KEY_2;
+common_scanmap['3'.charCodeAt(0)]  = KeyNames.KEY_3;
+common_scanmap['4'.charCodeAt(0)]  = KeyNames.KEY_4;
+common_scanmap['5'.charCodeAt(0)]  = KeyNames.KEY_5;
+common_scanmap['6'.charCodeAt(0)]  = KeyNames.KEY_6;
+common_scanmap['7'.charCodeAt(0)]  = KeyNames.KEY_7;
+common_scanmap['8'.charCodeAt(0)]  = KeyNames.KEY_8;
+common_scanmap['9'.charCodeAt(0)]  = KeyNames.KEY_9;
+common_scanmap['0'.charCodeAt(0)]  = KeyNames.KEY_0;
+common_scanmap[145]                = KeyNames.KEY_ScrollLock;
+common_scanmap[103]                = KeyNames.KEY_KP_7;
+common_scanmap[104]                = KeyNames.KEY_KP_8;
+common_scanmap[105]                = KeyNames.KEY_KP_9;
+common_scanmap[100]                = KeyNames.KEY_KP_4;
+common_scanmap[101]                = KeyNames.KEY_KP_5;
+common_scanmap[102]                = KeyNames.KEY_KP_6;
+common_scanmap[107]                = KeyNames.KEY_KP_Plus;
+common_scanmap[97]                 = KeyNames.KEY_KP_1;
+common_scanmap[98]                 = KeyNames.KEY_KP_2;
+common_scanmap[99]                 = KeyNames.KEY_KP_3;
+common_scanmap[96]                 = KeyNames.KEY_KP_0;
+common_scanmap[109]                = KeyNames.KEY_Minus;
+common_scanmap[110]                = KeyNames.KEY_KP_Decimal;
+common_scanmap[191]                = KeyNames.KEY_Slash;
+common_scanmap[190]                = KeyNames.KEY_Period;
+common_scanmap[188]                = KeyNames.KEY_Comma;
+common_scanmap[220]                = KeyNames.KEY_BSlash;
+common_scanmap[192]                = KeyNames.KEY_Tilde;
+common_scanmap[222]                = KeyNames.KEY_Quote;
+common_scanmap[219]                = KeyNames.KEY_LBrace;
+common_scanmap[221]                = KeyNames.KEY_RBrace;
+
 common_scanmap['Q'.charCodeAt(0)]  = KeyNames.KEY_Q;
 common_scanmap['W'.charCodeAt(0)]  = KeyNames.KEY_W;
 common_scanmap['E'.charCodeAt(0)]  = KeyNames.KEY_E;
@@ -172,9 +212,17 @@ common_scanmap[121]                = KeyNames.KEY_F10;
 common_scanmap[122]                = KeyNames.KEY_F11;
 common_scanmap[123]                = KeyNames.KEY_F12;
 
-/* These extended scancodes do not line up with values from atKeynames */
-common_scanmap[42]                 = 99;
-common_scanmap[19]                 = 101;    // Break
+/* TODO:  Break and Print are complex scan codes.  XSpice cheats and
+   uses Xorg synthesized codes to simplify them.  Fixing this will
+   require XSpice to handle the scan codes correctly, and then
+   fix spice-html5 to send the complex scan codes. */
+common_scanmap[42]                 = 99; // Print, XSpice only
+common_scanmap[19]                 = 101;// Break, XSpice only
+
+/* Handle the so called 'GREY' keys, for the extended keys that
+   were grey on the original AT keyboard.  These are
+   prefixed, as they were on the PS/2 controller, with an
+   0xE0 byte to indicate that they are extended */
 common_scanmap[111]                = 0xE035; // KP_Divide
 common_scanmap[106]                = 0xE037; // KP_Multiply
 common_scanmap[36]                 = 0xE047; // Home
@@ -187,41 +235,6 @@ common_scanmap[40]                 = 0xE050; // Down
 common_scanmap[34]                 = 0xE051; // PgDown
 common_scanmap[45]                 = 0xE052; // Insert
 common_scanmap[46]                 = 0xE053; // Delete
-
-/* These are not common between ALL browsers but are between Firefox and DOM3 */
-common_scanmap['1'.charCodeAt(0)]  = KeyNames.KEY_1;
-common_scanmap['2'.charCodeAt(0)]  = KeyNames.KEY_2;
-common_scanmap['3'.charCodeAt(0)]  = KeyNames.KEY_3;
-common_scanmap['4'.charCodeAt(0)]  = KeyNames.KEY_4;
-common_scanmap['5'.charCodeAt(0)]  = KeyNames.KEY_5;
-common_scanmap['6'.charCodeAt(0)]  = KeyNames.KEY_6;
-common_scanmap['7'.charCodeAt(0)]  = KeyNames.KEY_7;
-common_scanmap['8'.charCodeAt(0)]  = KeyNames.KEY_8;
-common_scanmap['9'.charCodeAt(0)]  = KeyNames.KEY_9;
-common_scanmap['0'.charCodeAt(0)]  = KeyNames.KEY_0;
-common_scanmap[145]                = KeyNames.KEY_ScrollLock;
-common_scanmap[103]                = KeyNames.KEY_KP_7;
-common_scanmap[104]                = KeyNames.KEY_KP_8;
-common_scanmap[105]                = KeyNames.KEY_KP_9;
-common_scanmap[100]                = KeyNames.KEY_KP_4;
-common_scanmap[101]                = KeyNames.KEY_KP_5;
-common_scanmap[102]                = KeyNames.KEY_KP_6;
-common_scanmap[107]                = KeyNames.KEY_KP_Plus;
-common_scanmap[97]                 = KeyNames.KEY_KP_1;
-common_scanmap[98]                 = KeyNames.KEY_KP_2;
-common_scanmap[99]                 = KeyNames.KEY_KP_3;
-common_scanmap[96]                 = KeyNames.KEY_KP_0;
-common_scanmap[109]                = KeyNames.KEY_Minus;
-common_scanmap[110]                = KeyNames.KEY_KP_Decimal;
-common_scanmap[191]                = KeyNames.KEY_Slash;
-common_scanmap[190]                = KeyNames.KEY_Period;
-common_scanmap[188]                = KeyNames.KEY_Comma;
-common_scanmap[220]                = KeyNames.KEY_BSlash;
-common_scanmap[192]                = KeyNames.KEY_Tilde;
-common_scanmap[222]                = KeyNames.KEY_Quote;
-common_scanmap[219]                = KeyNames.KEY_LBrace;
-common_scanmap[221]                = KeyNames.KEY_RBrace;
-
 common_scanmap[91]                 = 0xE05B; //KeyNames.KEY_LMeta
 common_scanmap[92]                 = 0xE05C; //KeyNames.KEY_RMeta
 common_scanmap[93]                 = 0xE05D; //KeyNames.KEY_Menu
