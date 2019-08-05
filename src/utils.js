@@ -211,6 +211,7 @@ common_scanmap[97]                 = KeyNames.KEY_KP_1;
 common_scanmap[98]                 = KeyNames.KEY_KP_2;
 common_scanmap[99]                 = KeyNames.KEY_KP_3;
 common_scanmap[96]                 = KeyNames.KEY_KP_0;
+common_scanmap[109]                = KeyNames.KEY_Minus;
 common_scanmap[110]                = KeyNames.KEY_KP_Decimal;
 common_scanmap[191]                = KeyNames.KEY_Slash;
 common_scanmap[190]                = KeyNames.KEY_Period;
@@ -228,7 +229,6 @@ common_scanmap[93]                 = 0xE05D; //KeyNames.KEY_Menu
 /* Firefox/Mozilla codes */
 var firefox_scanmap = [];
 firefox_scanmap[173]                = KeyNames.KEY_Minus;
-firefox_scanmap[109]                = KeyNames.KEY_Minus;
 firefox_scanmap[61]                 = KeyNames.KEY_Equal;
 firefox_scanmap[59]                 = KeyNames.KEY_SemiColon;
 
