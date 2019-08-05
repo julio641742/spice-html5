@@ -157,6 +157,7 @@ common_scanmap[16]                 = KeyNames.KEY_ShiftL;
 common_scanmap[17]                 = KeyNames.KEY_LCtrl;
 common_scanmap[18]                 = KeyNames.KEY_Alt;
 common_scanmap[20]                 = KeyNames.KEY_CapsLock;
+common_scanmap[44]                 = KeyNames.KEY_SysReqest;
 common_scanmap[144]                = KeyNames.KEY_NumLock;
 common_scanmap[112]                = KeyNames.KEY_F1;
 common_scanmap[113]                = KeyNames.KEY_F2;
@@ -186,7 +187,6 @@ common_scanmap[40]                 = 0xE050; // Down
 common_scanmap[34]                 = 0xE051; // PgDown
 common_scanmap[45]                 = 0xE052; // Insert
 common_scanmap[46]                 = 0xE053; // Delete
-common_scanmap[44]                 = 0x2A37; // Print
 
 /* These are not common between ALL browsers but are between Firefox and DOM3 */
 common_scanmap['1'.charCodeAt(0)]  = KeyNames.KEY_1;
