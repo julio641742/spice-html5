@@ -223,21 +223,21 @@ common_scanmap[19]                 = 101;// Break, XSpice only
    were grey on the original AT keyboard.  These are
    prefixed, as they were on the PS/2 controller, with an
    0xE0 byte to indicate that they are extended */
-common_scanmap[111]                = 0xE035; // KP_Divide
-common_scanmap[106]                = 0xE037; // KP_Multiply
-common_scanmap[36]                 = 0xE047; // Home
-common_scanmap[38]                 = 0xE048; // Up
-common_scanmap[33]                 = 0xE049; // PgUp
-common_scanmap[37]                 = 0xE04B; // Left
-common_scanmap[39]                 = 0xE04D; // Right
-common_scanmap[35]                 = 0xE04F; // End
-common_scanmap[40]                 = 0xE050; // Down
-common_scanmap[34]                 = 0xE051; // PgDown
-common_scanmap[45]                 = 0xE052; // Insert
-common_scanmap[46]                 = 0xE053; // Delete
-common_scanmap[91]                 = 0xE05B; //KeyNames.KEY_LMeta
-common_scanmap[92]                 = 0xE05C; //KeyNames.KEY_RMeta
-common_scanmap[93]                 = 0xE05D; //KeyNames.KEY_Menu
+common_scanmap[111]                = 0xE0 | (KeyNames.KEY_Slash << 8);// KP_Divide
+common_scanmap[106]                = 0xE0 | (KeyNames.KEY_KP_Multiply << 8); // KP_Multiply
+common_scanmap[36]                 = 0xE0 | (KeyNames.KEY_KP_7 << 8); // Home
+common_scanmap[38]                 = 0xE0 | (KeyNames.KEY_KP_8 << 8); // Up
+common_scanmap[33]                 = 0xE0 | (KeyNames.KEY_KP_9 << 8); // PgUp
+common_scanmap[37]                 = 0xE0 | (KeyNames.KEY_KP_4 << 8); // Left
+common_scanmap[39]                 = 0xE0 | (KeyNames.KEY_KP_6 << 8); // Right
+common_scanmap[35]                 = 0xE0 | (KeyNames.KEY_KP_1 << 8); // End
+common_scanmap[40]                 = 0xE0 | (KeyNames.KEY_KP_2 << 8); // Down
+common_scanmap[34]                 = 0xE0 | (KeyNames.KEY_KP_3 << 8); // PgDown
+common_scanmap[45]                 = 0xE0 | (KeyNames.KEY_KP_0 << 8); // Insert
+common_scanmap[46]                 = 0xE0 | (KeyNames.KEY_KP_Decimal << 8); // Delete
+common_scanmap[91]                 = 0xE0 | (0x5B << 8); //KeyNames.KEY_LMeta
+common_scanmap[92]                 = 0xE0 | (0x5C << 8); //KeyNames.KEY_RMeta
+common_scanmap[93]                 = 0xE0 | (0x5D << 8); //KeyNames.KEY_Menu
 
 /* Firefox/Mozilla codes */
 var firefox_scanmap = [];
@@ -273,11 +273,7 @@ function keycode_to_start_scan(code)
         return 0;
     }
 
-    if (scancode < 0x100) {
-        return scancode;
-    } else {
-        return 0xe0 | ((scancode - 0x100) << 8);
-    }
+    return scancode;
 }
 
 function keycode_to_end_scan(code)
@@ -289,7 +285,7 @@ function keycode_to_end_scan(code)
     if (scancode < 0x100) {
         return scancode | 0x80;
     } else {
-        return 0x80e0 | ((scancode - 0x100) << 8);
+        return scancode | 0x8000;
     }
 }
 
