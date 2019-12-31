@@ -571,7 +571,7 @@ SpiceDisplayConn.prototype.process_channel_message = function(msg)
                 top += this.surfaces[m.surface_id].canvas.offsetTop;
             }
             document.getElementById(this.parent.screen_id).appendChild(v);
-            v.setAttribute('style', "position: absolute; top:" + top + "px; left:" + left + "px;");
+            v.setAttribute('style', "pointer-events:none; position: absolute; top:" + top + "px; left:" + left + "px;");
 
             media.addEventListener('sourceopen', handle_video_source_open, false);
             media.addEventListener('sourceended', handle_video_source_ended, false);
