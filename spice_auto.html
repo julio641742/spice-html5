@@ -198,18 +198,51 @@
     <body>
 
         <div id="login">
-            <span class="logo">SPICE</span>
+            <button onclick="open_nav()">&#9776; SPICE</button>
+            <p id="hostname">Host Console</p>
+        </div>
+
+        <div id="Sidenav" class="SidenavClosed" style="width: 0;">
+            <p class="closebtn" onclick="close_nav()">&#10006;</p>
+            <button id="debugLogs">Toggle Debug Logs</button>
+            <div id="message-div" class="spice-message" style="display: none;"></div>
+
+            <div id="debug-div">
+            <!-- If DUMPXXX is turned on, dumped images will go here -->
+            </div>
         </div>
 
         <div id="spice-area">
             <div id="spice-screen" class="spice-screen"></div>
         </div>
 
-        <div id="message-div" class="spice-message"></div>
+        <script>
+            function show_debug_Logs() {
+                var content = document.getElementById('message-div')
+                if (content.style.display === 'block') {
+                    content.style.display = 'none';
+                } else {
+                    content.style.display = 'block';
+                }
+            }
 
-        <div id="debug-div">
-        <!-- If DUMPXXX is turned on, dumped images will go here -->
-        </div>
+            function display_hostname() {
+                var title = new URLSearchParams(window.location.search);
+                name = title.getAll('title');
+                name = name.split('(')[0];
+                document.getElementById('hostname').innerHTML = (name);
+            }
 
+            function open_nav() {
+                document.getElementById('Sidenav').className = 'SidenavOpen';
+            }
+
+            function close_nav() {
+                document.getElementById('Sidenav').className = 'SidenavClosed';
+            }
+
+            document.getElementById('debugLogs').addEventListener('click', function() { show_debug_Logs(); });
+            display_hostname()
+        </script>
     </body>
 </html>
