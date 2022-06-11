@@ -50,10 +50,12 @@ function SpiceConn(o)
     if (o === undefined || o.uri === undefined || ! o.uri)
         throw new Error("You must specify a uri");
 
-    this.ws = new WebSocket(o.uri, 'binary');
+    this.ws = new WebSocket(o.uri);
 
     if (! this.ws.binaryType)
         throw new Error("WebSocket doesn't support binaryType.  Try a different browser.");
+
+    this.ws.binaryType = "arraybuffer";
 
     this.connection_id = o.connection_id !== undefined ? o.connection_id : 0;
     this.type = o.type !== undefined ? o.type : Constants.SPICE_CHANNEL_MAIN;
