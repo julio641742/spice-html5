@@ -112,7 +112,7 @@ SpiceImageDescriptor.prototype =
 {
     from_dv: function(dv, at, mb)
     {
-        this.id = dv.getUint64(at, true); at += 8;
+        this.id = dv.getBigUint64(at, true); at += 8;
         this.type  = dv.getUint8(at, true); at ++;
         this.flags = dv.getUint8(at, true); at ++;
         this.width = dv.getUint32(at, true); at += 4;
@@ -130,7 +130,7 @@ SpicePalette.prototype =
     from_dv: function(dv, at, mb)
     {
         var i;
-        this.unique = dv.getUint64(at, true); at += 8;
+        this.unique = dv.getBigUint64(at, true); at += 8;
         this.num_ents = dv.getUint16(at, true); at += 2;
         this.ents = [];
         for (i = 0; i < this.num_ents; i++)
@@ -156,7 +156,7 @@ SpiceBitmap.prototype =
         this.stride = dv.getUint32(at, true); at += 4;
         if (this.flags & Constants.SPICE_BITMAP_FLAGS_PAL_FROM_CACHE)
         {
-            this.palette_id = dv.getUint64(at, true); at += 8;
+            this.palette_id = dv.getBigUint64(at, true); at += 8;
         }
         else
         {
@@ -423,7 +423,7 @@ SpiceCursorHeader.prototype =
 {
     from_dv: function(dv, at, mb)
     {
-        this.unique = dv.getUint64(at, true); at += 8;
+        this.unique = dv.getBigUint64(at, true); at += 8;
         this.type = dv.getUint8(at, true); at ++;
         this.width = dv.getUint16(at, true); at += 2;
         this.height = dv.getUint16(at, true); at += 2;
