@@ -26,7 +26,6 @@
 **  simulate a cursor using an image that is moved around the screen.
 **--------------------------------------------------------------------------*/
 
-import { SpiceDataView } from './spicedataview.js';
 import { hex_sha1 } from './thirdparty/sha1.js';
 
 var SpiceSimulateCursor = {
@@ -171,7 +170,7 @@ SpiceSimulateCursor.ICONDIR.prototype =
     to_buffer: function(a, at)
     {
         at = at || 0;
-        var dv = new SpiceDataView(a);
+        var dv = new DataView(a);
         dv.setUint16(at, 0, true); at += 2;
         dv.setUint16(at, 2, true); at += 2;
         dv.setUint16(at, 1, true); at += 2;
@@ -188,7 +187,7 @@ SpiceSimulateCursor.ICONDIRENTRY.prototype =
     to_buffer: function(a, at)
     {
         at = at || 0;
-        var dv = new SpiceDataView(a);
+        var dv = new DataView(a);
         dv.setUint8(at, this.width); at++;
         dv.setUint8(at, this.height); at++;
         dv.setUint8(at, 0); at++;  /* color palette count, unused */
