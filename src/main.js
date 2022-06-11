@@ -172,19 +172,19 @@ SpiceMainConn.prototype.process_channel_message = function(msg)
                 this.inputs = new SpiceInputsConn(conn);
                 this.inputs.mouse_mode = this.mouse_mode;
             }
-            else if (chans.channels[i].type == Constants.SPICE_CHANNEL_CURSOR)
-                this.cursor = new SpiceCursorConn(conn);
-            else if (chans.channels[i].type == Constants.SPICE_CHANNEL_PLAYBACK)
-                this.cursor = new SpicePlaybackConn(conn);
-            else if (chans.channels[i].type == Constants.SPICE_CHANNEL_PORT)
-                this.ports.push(new SpicePortConn(conn));
-            else
-            {
-                if (! ("extra_channels" in this))
-                    this.extra_channels = [];
-                this.extra_channels[i] = new SpiceConn(conn);
-                this.log_err("Channel type " + this.extra_channels[i].channel_type() + " not implemented");
-            }
+            // else if (chans.channels[i].type == Constants.SPICE_CHANNEL_CURSOR)
+            //     this.cursor = new SpiceCursorConn(conn);
+            // else if (chans.channels[i].type == Constants.SPICE_CHANNEL_PLAYBACK)
+            //     this.cursor = new SpicePlaybackConn(conn);
+            // else if (chans.channels[i].type == Constants.SPICE_CHANNEL_PORT)
+            //     this.ports.push(new SpicePortConn(conn));
+            // else
+            // {
+            //     if (! ("extra_channels" in this))
+            //         this.extra_channels = [];
+            //     this.extra_channels[i] = new SpiceConn(conn);
+            //     this.log_err("Channel type " + this.extra_channels[i].channel_type() + " not implemented");
+            // }
 
         }
 
