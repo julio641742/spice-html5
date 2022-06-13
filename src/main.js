@@ -20,15 +20,15 @@
 
 import * as Messages from './spicemsg.js';
 import { Constants } from './enums.js';
-import { SpiceCursorConn } from './cursor.js';
+// import { SpiceCursorConn } from './cursor.js';
 import { SpiceConn } from './spiceconn.js';
 import { DEBUG } from './utils.js';
-import { SpiceFileXferTask } from './filexfer.js';
+// import { SpiceFileXferTask } from './filexfer.js';
 import { SpiceInputsConn, sendCtrlAltDel } from './inputs.js';
 import { SpiceDisplayConn } from './display.js';
-import { SpicePlaybackConn } from './playback.js';
-import { SpicePortConn } from './port.js';
-import { handle_file_dragover, handle_file_drop } from './filexfer.js';
+// import { SpicePlaybackConn } from './playback.js';
+// import { SpicePortConn } from './port.js';
+// import { handle_file_dragover, handle_file_drop } from './filexfer.js';
 import { resize_helper, handle_resize } from './resize.js';
 
 /*----------------------------------------------------------------------------
@@ -71,10 +71,10 @@ function SpiceMainConn()
     SpiceConn.apply(this, arguments);
 
     this.agent_msg_queue = [];
-    this.file_xfer_tasks = {};
-    this.file_xfer_task_id = 0;
-    this.file_xfer_read_queue = [];
-    this.ports = [];
+    // this.file_xfer_tasks = {};
+    // this.file_xfer_task_id = 0;
+    // this.file_xfer_read_queue = [];
+    // this.ports = [];
 }
 
 SpiceMainConn.prototype = Object.create(SpiceConn.prototype);
@@ -207,17 +207,17 @@ SpiceMainConn.prototype.process_channel_message = function(msg)
 
     if (msg.type == Constants.SPICE_MSG_MAIN_AGENT_TOKEN)
     {
-        var remaining_tokens, tokens = new Messages.SpiceMsgMainAgentTokens(msg.data);
-        this.agent_tokens += tokens.num_tokens;
+        var connected_tokens = new Messages.SpiceMsgMainAgentTokens(msg.data);
+        this.agent_tokens += connected_tokens.num_tokens;
         this.send_agent_message_queue();
 
-        remaining_tokens = this.agent_tokens;
-        while (remaining_tokens > 0 && this.file_xfer_read_queue.length > 0)
-        {
-            var xfer_task = this.file_xfer_read_queue.shift();
-            this.file_xfer_read(xfer_task, xfer_task.read_bytes);
-            remaining_tokens--;
-        }
+        // remaining_tokens = this.agent_tokens;
+        // while (remaining_tokens > 0 && this.file_xfer_read_queue.length > 0)
+        // {
+        //     var xfer_task = this.file_xfer_read_queue.shift();
+        //     this.file_xfer_read(xfer_task, xfer_task.read_bytes);
+        //     remaining_tokens--;
+        // }
         return true;
     }
 
@@ -237,11 +237,11 @@ SpiceMainConn.prototype.process_channel_message = function(msg)
                 this.announce_agent_capabilities(0);
             return true;
         }
-        else if (agent_data.type == Constants.VD_AGENT_FILE_XFER_STATUS)
-        {
-            this.handle_file_xfer_status(new Messages.VDAgentFileXferStatusMessage(agent_data.data));
-            return true;
-        }
+        // else if (agent_data.type == Constants.VD_AGENT_FILE_XFER_STATUS)
+        // {
+        //     this.handle_file_xfer_status(new Messages.VDAgentFileXferStatusMessage(agent_data.data));
+        //     return true;
+        // }
 
         return false;
     }
@@ -370,106 +370,106 @@ SpiceMainConn.prototype.resize_window = function(flags, width, height, depth, x,
     this.send_agent_message(Constants.VD_AGENT_MONITORS_CONFIG, monitors_config);
 }
 
-SpiceMainConn.prototype.file_xfer_start = function(file)
-{
-    var task_id, xfer_start, task;
+// SpiceMainConn.prototype.file_xfer_start = function(file)
+// {
+//     var task_id, xfer_start, task;
 
-    task_id = this.file_xfer_task_id++;
-    task = new SpiceFileXferTask(task_id, file);
-    task.create_progressbar();
-    this.file_xfer_tasks[task_id] = task;
-    xfer_start = new Messages.VDAgentFileXferStartMessage(task_id, file.name, file.size);
-    this.send_agent_message(Constants.VD_AGENT_FILE_XFER_START, xfer_start);
-}
+//     task_id = this.file_xfer_task_id++;
+//     task = new SpiceFileXferTask(task_id, file);
+//     task.create_progressbar();
+//     this.file_xfer_tasks[task_id] = task;
+//     xfer_start = new Messages.VDAgentFileXferStartMessage(task_id, file.name, file.size);
+//     this.send_agent_message(Constants.VD_AGENT_FILE_XFER_START, xfer_start);
+// }
 
-SpiceMainConn.prototype.handle_file_xfer_status = function(file_xfer_status)
-{
-    var xfer_error, xfer_task;
-    if (!this.file_xfer_tasks[file_xfer_status.id])
-    {
-        return;
-    }
-    xfer_task = this.file_xfer_tasks[file_xfer_status.id];
-    switch (file_xfer_status.result)
-    {
-        case Constants.VD_AGENT_FILE_XFER_STATUS_CAN_SEND_DATA:
-            this.file_xfer_read(xfer_task);
-            return;
-        case Constants.VD_AGENT_FILE_XFER_STATUS_CANCELLED:
-            xfer_error = "transfer is cancelled by spice agent";
-            break;
-        case Constants.VD_AGENT_FILE_XFER_STATUS_ERROR:
-            xfer_error = "some errors occurred in the spice agent";
-            break;
-        case Constants.VD_AGENT_FILE_XFER_STATUS_SUCCESS:
-            break;
-        default:
-            xfer_error = "unhandled status type: " + file_xfer_status.result;
-            break;
-    }
+// SpiceMainConn.prototype.handle_file_xfer_status = function(file_xfer_status)
+// {
+//     var xfer_error, xfer_task;
+//     if (!this.file_xfer_tasks[file_xfer_status.id])
+//     {
+//         return;
+//     }
+//     xfer_task = this.file_xfer_tasks[file_xfer_status.id];
+//     switch (file_xfer_status.result)
+//     {
+//         case Constants.VD_AGENT_FILE_XFER_STATUS_CAN_SEND_DATA:
+//             this.file_xfer_read(xfer_task);
+//             return;
+//         case Constants.VD_AGENT_FILE_XFER_STATUS_CANCELLED:
+//             xfer_error = "transfer is cancelled by spice agent";
+//             break;
+//         case Constants.VD_AGENT_FILE_XFER_STATUS_ERROR:
+//             xfer_error = "some errors occurred in the spice agent";
+//             break;
+//         case Constants.VD_AGENT_FILE_XFER_STATUS_SUCCESS:
+//             break;
+//         default:
+//             xfer_error = "unhandled status type: " + file_xfer_status.result;
+//             break;
+//     }
 
-    this.file_xfer_completed(xfer_task, xfer_error)
-}
+//     this.file_xfer_completed(xfer_task, xfer_error)
+// }
 
-SpiceMainConn.prototype.file_xfer_read = function(file_xfer_task, start_byte)
-{
-    var FILE_XFER_CHUNK_SIZE = 32 * Constants.VD_AGENT_MAX_DATA_SIZE;
-    var _this = this;
-    var sb, eb;
-    var slice, reader;
+// SpiceMainConn.prototype.file_xfer_read = function(file_xfer_task, start_byte)
+// {
+//     var FILE_XFER_CHUNK_SIZE = 32 * Constants.VD_AGENT_MAX_DATA_SIZE;
+//     var _this = this;
+//     var sb, eb;
+//     var slice, reader;
 
-    if (!file_xfer_task ||
-        !this.file_xfer_tasks[file_xfer_task.id] ||
-        (start_byte > 0 && start_byte == file_xfer_task.file.size))
-    {
-        return;
-    }
+//     if (!file_xfer_task ||
+//         !this.file_xfer_tasks[file_xfer_task.id] ||
+//         (start_byte > 0 && start_byte == file_xfer_task.file.size))
+//     {
+//         return;
+//     }
 
-    if (file_xfer_task.cancelled)
-    {
-        var xfer_status = new Messages.VDAgentFileXferStatusMessage(file_xfer_task.id,
-                                                           Constants.VD_AGENT_FILE_XFER_STATUS_CANCELLED);
-        this.send_agent_message(Constants.VD_AGENT_FILE_XFER_STATUS, xfer_status);
-        delete this.file_xfer_tasks[file_xfer_task.id];
-        return;
-    }
+//     if (file_xfer_task.cancelled)
+//     {
+//         var xfer_status = new Messages.VDAgentFileXferStatusMessage(file_xfer_task.id,
+//                                                            Constants.VD_AGENT_FILE_XFER_STATUS_CANCELLED);
+//         this.send_agent_message(Constants.VD_AGENT_FILE_XFER_STATUS, xfer_status);
+//         delete this.file_xfer_tasks[file_xfer_task.id];
+//         return;
+//     }
 
-    sb = start_byte || 0,
-    eb = Math.min(sb + FILE_XFER_CHUNK_SIZE, file_xfer_task.file.size);
+//     sb = start_byte || 0,
+//     eb = Math.min(sb + FILE_XFER_CHUNK_SIZE, file_xfer_task.file.size);
 
-    if (!this.agent_tokens)
-    {
-        file_xfer_task.read_bytes = sb;
-        this.file_xfer_read_queue.push(file_xfer_task);
-        return;
-    }
+//     if (!this.agent_tokens)
+//     {
+//         file_xfer_task.read_bytes = sb;
+//         this.file_xfer_read_queue.push(file_xfer_task);
+//         return;
+//     }
 
-    reader = new FileReader();
-    reader.onload = function(e)
-    {
-        var xfer_data = new Messages.VDAgentFileXferDataMessage(file_xfer_task.id,
-                                                       e.target.result.byteLength,
-                                                       e.target.result);
-        _this.send_agent_message(Constants.VD_AGENT_FILE_XFER_DATA, xfer_data);
-        _this.file_xfer_read(file_xfer_task, eb);
-        file_xfer_task.update_progressbar(eb);
-    };
+//     reader = new FileReader();
+//     reader.onload = function(e)
+//     {
+//         var xfer_data = new Messages.VDAgentFileXferDataMessage(file_xfer_task.id,
+//                                                        e.target.result.byteLength,
+//                                                        e.target.result);
+//         _this.send_agent_message(Constants.VD_AGENT_FILE_XFER_DATA, xfer_data);
+//         _this.file_xfer_read(file_xfer_task, eb);
+//         file_xfer_task.update_progressbar(eb);
+//     };
 
-    slice = file_xfer_task.file.slice(sb, eb);
-    reader.readAsArrayBuffer(slice);
-}
+//     slice = file_xfer_task.file.slice(sb, eb);
+//     reader.readAsArrayBuffer(slice);
+// }
 
-SpiceMainConn.prototype.file_xfer_completed = function(file_xfer_task, error)
-{
-    if (error)
-        this.log_err(error);
-    else
-        this.log_info("transfer of '" + file_xfer_task.file.name +"' was successful");
+// SpiceMainConn.prototype.file_xfer_completed = function(file_xfer_task, error)
+// {
+//     if (error)
+//         this.log_err(error);
+//     else
+//         this.log_info("transfer of '" + file_xfer_task.file.name +"' was successful");
 
-    file_xfer_task.remove_progressbar();
+//     file_xfer_task.remove_progressbar();
 
-    delete this.file_xfer_tasks[file_xfer_task.id];
-}
+//     delete this.file_xfer_tasks[file_xfer_task.id];
+// }
 
 SpiceMainConn.prototype.connect_agent = function()
 {
@@ -511,8 +511,8 @@ SpiceMainConn.prototype.relative_now = function()
 
 export {
   SpiceMainConn,
-  handle_file_dragover,
-  handle_file_drop,
+//   handle_file_dragover,
+//   handle_file_drop,
   resize_helper,
   handle_resize,
   sendCtrlAltDel,
