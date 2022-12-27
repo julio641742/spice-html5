@@ -237,6 +237,28 @@ SpiceMainConn.prototype.process_channel_message = function(msg)
                 this.announce_agent_capabilities(0);
             return true;
         }
+        else if (agent_data.type == Constants.VD_AGENT_CLIPBOARD_GRAB)
+        {
+            this.clipboard_request();
+            return true;
+        }
+        else if (agent_data.type == Constants.VD_AGENT_CLIPBOARD_RELEASE)
+        {
+            return true;
+        }
+        else if (agent_data.type == Constants.VD_AGENT_CLIPBOARD)
+        {
+            const text = new TextDecoder().decode(agent_data.data.slice(4));
+            navigator.clipboard.writeText(text);
+            return true;
+        }
+        else if (agent_data.type == Constants.VD_AGENT_CLIPBOARD_REQUEST)
+        {
+            let el =  document.getElementById("copy");
+            const data = new TextEncoder().encode(el.value);
+            this.clipboard(data, data.byteLength);
+            return true;
+        }
         // else if (agent_data.type == Constants.VD_AGENT_FILE_XFER_STATUS)
         // {
         //     this.handle_file_xfer_status(new Messages.VDAgentFileXferStatusMessage(agent_data.data));
@@ -360,6 +382,7 @@ SpiceMainConn.prototype.announce_agent_capabilities = function(request)
 {
     var caps = new Messages.VDAgentAnnounceCapabilities(request, (1 << Constants.VD_AGENT_CAP_MOUSE_STATE) |
                                                         (1 << Constants.VD_AGENT_CAP_MONITORS_CONFIG) |
+                                                        (1 << Constants.VD_AGENT_CAP_CLIPBOARD_BY_DEMAND) |
                                                         (1 << Constants.VD_AGENT_CAP_REPLY));
     this.send_agent_message(Constants.VD_AGENT_ANNOUNCE_CAPABILITIES, caps);
 }
@@ -507,6 +530,31 @@ SpiceMainConn.prototype.relative_now = function()
 {
     var ret = (Date.now() - this.our_mm_time) + this.mm_time;
     return ret;
+}
+
+SpiceMainConn.prototype.clipboard = function(data, size)
+{
+    let request = new Messages.VDAgentClipboard(Constants.VD_AGENT_CLIPBOARD_UTF8_TEXT, data, size);
+    this.send_agent_message(Constants.VD_AGENT_CLIPBOARD, request);
+    this.clipboard_release();
+}
+
+SpiceMainConn.prototype.clipboard_request = function()
+{
+    let request = new Messages.VDAgentClipboardRequest(Constants.VD_AGENT_CLIPBOARD_UTF8_TEXT);
+    this.send_agent_message(Constants.VD_AGENT_CLIPBOARD_REQUEST, request);
+}
+
+SpiceMainConn.prototype.clipboard_grab = function()
+{
+    let request = new Messages.VDAgentClipboardGrab([Constants.VD_AGENT_CLIPBOARD_UTF8_TEXT]);
+    this.send_agent_message(Constants.VD_AGENT_CLIPBOARD_GRAB, request);
+}
+
+SpiceMainConn.prototype.clipboard_release = function()
+{
+    let request = new Messages.VDAgentClipboardRelease();
+    this.send_agent_message(Constants.VD_AGENT_CLIPBOARD_RELEASE, request);
 }
 
 export {

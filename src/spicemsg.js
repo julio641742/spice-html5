@@ -654,6 +654,81 @@ VDAgentFileXferDataMessage.prototype =
     }
 }
 
+function VDAgentClipboard(type, data, size)
+{
+    this.type = type
+    this.data = data
+    this.size = size
+}
+
+VDAgentClipboard.prototype =
+{
+    to_buffer: function(a, at)
+    {
+        at = at || 0;
+        let dv = new DataView(a);
+        dv.setUint32(at, this.type, true); at += 4;
+        for (let i = 0; i < this.size; i++, at++)
+            dv.setUint8(at, this.data[i], true);
+    },
+    buffer_size: function()
+    {
+        return 4 + this.size;
+    }
+}
+
+function VDAgentClipboardRequest(type)
+{
+    this.type = type;
+}
+
+VDAgentClipboardRequest.prototype =
+{
+    to_buffer: function(a, at)
+    {
+        at = at || 0;
+        let dv = new DataView(a);
+        dv.setUint32(at , this.type, true);
+    },
+    buffer_size: function()
+    {
+        return 4;
+    }
+}
+
+function VDAgentClipboardGrab(types)
+{
+    this.types = types;
+}
+
+VDAgentClipboardGrab.prototype =
+{
+    to_buffer: function(a, at)
+    {
+        at = at || 0;
+        let dv = new DataView(a);
+        for (let i = 0; i < this.types.length; i++)
+            dv.setUint32(at, this.types[i], true); at += 4;
+    },
+    buffer_size: function()
+    {
+        return 4 * this.types.length;
+    }
+}
+
+function VDAgentClipboardRelease()
+{}
+
+VDAgentClipboardRelease.prototype =
+{
+    to_buffer: function(a, at)
+    {},
+    buffer_size: function()
+    {
+        return 0;
+    }
+}
+
 function SpiceMsgNotify(a, at)
 {
     this.from_buffer(a, at);
@@ -1367,4 +1442,8 @@ export {
   SpiceMsgcDisplayStreamReport,
   SpiceMsgDisplayInvalList,
   SpiceMsgPortInit,
+  VDAgentClipboard,
+  VDAgentClipboardRequest,
+  VDAgentClipboardGrab,
+  VDAgentClipboardRelease,
 };
